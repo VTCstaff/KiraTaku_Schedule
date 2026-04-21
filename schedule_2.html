@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -9,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="時間割">
 <link rel="apple-touch-icon" href="icon.png">
 <title>時間割</title>
-
+ 
 <style>
   :root {
     --bg: #0e0e12;
@@ -26,10 +25,10 @@
     --pt-bg: rgba(245,166,35,0.12);
     --text: #f0f0f8;
     --muted: #6e6e8a;
-    --now: #ff4d6d;
+    --now: #f5c842;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
+ 
   html, body {
     background: var(--bg);
     color: var(--text);
@@ -38,7 +37,7 @@
     min-height: 100dvh;
     overflow-x: hidden;
   }
-
+ 
   /* ── Header ── */
   .header {
     position: sticky;
@@ -50,14 +49,14 @@
     padding: 16px 20px 0;
     border-bottom: 1px solid var(--border);
   }
-
+ 
   .header-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 14px;
   }
-
+ 
   .header-title {
     font-size: clamp(11px, 1.5vw, 16px);
     font-weight: 700;
@@ -65,13 +64,13 @@
     color: var(--muted);
     text-transform: uppercase;
   }
-
+ 
   .header-date {
     font-size: 13px;
     font-weight: 700;
     color: var(--text);
   }
-
+ 
   /* ── Day tabs ── */
   .day-tabs {
     display: flex;
@@ -81,7 +80,7 @@
     padding-bottom: 12px;
   }
   .day-tabs::-webkit-scrollbar { display: none; }
-
+ 
   .day-tab {
     flex-shrink: 0;
     padding: 6px 14px;
@@ -112,17 +111,17 @@
   .day-tab.no-class {
     opacity: .45;
   }
-
+ 
   /* ── Content ── */
   .content {
     padding: 16px 16px 40px;
     max-width: 720px;
     margin: 0 auto;
   }
-
+ 
   .day-view { display: none; }
   .day-view.active { display: block; }
-
+ 
   /* ── No class ── */
   .no-class-msg {
     display: flex;
@@ -135,7 +134,7 @@
   }
   .no-class-msg .icon { font-size: 36px; }
   .no-class-msg p { font-size: 14px; letter-spacing: .05em; }
-
+ 
   /* ── Period block ── */
   .period-block {
     display: flex;
@@ -143,17 +142,17 @@
     margin-bottom: 10px;
     position: relative;
   }
-
+ 
   .period-block.now-block::before {
     content: '';
     position: absolute;
-    left: -16px; right: -16px;
+    left: 0; right: 0;
     top: 0; bottom: 0;
-    background: rgba(255,77,109,0.05);
+    background: rgba(245,200,66,0.05);
     border-radius: 12px;
     pointer-events: none;
   }
-
+ 
   .period-label {
     width: 36px;
     flex-shrink: 0;
@@ -163,18 +162,18 @@
     padding-top: 14px;
     gap: 3px;
   }
-
+ 
   .period-num {
     font-size: clamp(20px, 3vw, 32px);
     font-weight: 900;
     line-height: 1;
     color: var(--text);
   }
-
+ 
   .period-block.now-block .period-num {
     color: var(--now);
   }
-
+ 
   .period-time {
     font-size: clamp(9px, 1.2vw, 13px);
     color: var(--muted);
@@ -182,19 +181,47 @@
     text-align: center;
     line-height: 1.5;
   }
-
+ 
   .period-line {
-    width: 1px;
+    width: 2px;
     background: var(--border);
-    margin: 28px 0 4px;
+    margin-top: 0;
+    margin-bottom: 0;
     align-self: stretch;
+    flex-shrink: 0;
+    border-radius: 1px;
   }
-
+ 
+  .period-block.now-block .card {
+    box-shadow: 0 0 0 2px #f5c842, 0 0 20px rgba(245,200,66,0.3), 0 0 40px rgba(245,200,66,0.1);
+    border-color: #f5c842 !important;
+    animation: gold-pulse 1.5s ease-in-out infinite;
+  }
+  .period-block.now-block .card-empty {
+    box-shadow: 0 0 0 2px #f5c842, 0 0 20px rgba(245,200,66,0.3);
+    border-color: #f5c842;
+    animation: gold-pulse 1.5s ease-in-out infinite;
+  }
   .period-block.now-block .period-line {
-    background: var(--now);
-    opacity: .4;
+    background: #f5c842;
+    opacity: 1;
+    width: 2px;
+    box-shadow: 0 0 8px rgba(245,200,66,0.8);
+    animation: line-pulse 1.5s ease-in-out infinite;
   }
-
+  @keyframes gold-pulse {
+    0%,100% {
+      box-shadow: 0 0 0 2px #f5c842, 0 0 12px rgba(245,200,66,0.4), 0 0 24px rgba(245,200,66,0.1);
+    }
+    50% {
+      box-shadow: 0 0 0 2px #f5c842, 0 0 24px rgba(245,200,66,0.7), 0 0 48px rgba(245,200,66,0.3);
+    }
+  }
+  @keyframes line-pulse {
+    0%,100% { box-shadow: 0 0 4px rgba(245,200,66,0.5); opacity: 0.7; }
+    50% { box-shadow: 0 0 16px rgba(245,200,66,1), 0 0 32px rgba(245,200,66,0.5); opacity: 1; }
+  }
+ 
   .cards-col {
     flex: 1;
     display: flex;
@@ -202,7 +229,7 @@
     gap: 6px;
     padding: 6px 0;
   }
-
+ 
   /* ── Card ── */
   .card {
     border-radius: 12px;
@@ -212,42 +239,44 @@
     border: 1px solid transparent;
     animation: fadeUp .3s ease both;
   }
-
+ 
   @keyframes fadeUp {
     from { opacity:0; transform:translateY(8px); }
     to   { opacity:1; transform:translateY(0); }
   }
-
+ 
   .card::before {
     content: '';
     position: absolute;
     left: 0; top: 0; bottom: 0;
     width: 3px;
   }
-
+ 
   .card.both   { background: var(--both-bg);   border-color: rgba(62,207,142,.2);  } .card.both::before   { background: var(--both); }
   .card.takumi { background: var(--takumi-bg);  border-color: rgba(91,156,246,.2);  } .card.takumi::before { background: var(--takumi); }
   .card.kirra  { background: var(--kirra-bg);   border-color: rgba(249,112,102,.2); } .card.kirra::before  { background: var(--kirra); }
   .card.pt     { background: var(--pt-bg);      border-color: rgba(245,166,35,.2);  border-style: dashed; } .card.pt::before { background: var(--pt); }
   .card.pt-regular { background: var(--pt-bg);  border-color: rgba(245,166,35,.2);  } .card.pt-regular::before { background: var(--pt); }
-
+ 
   .now-badge {
     position: absolute;
     top: 8px; right: 10px;
-    background: var(--now);
-    color: #fff;
+    background: #f5c842;
+    color: #0a0a14;
     font-size: clamp(9px, 1.2vw, 13px);
-    font-weight: 700;
-    padding: 2px 7px;
-    border-radius: 10px;
-    letter-spacing: .05em;
-    animation: pulse 2s infinite;
+    font-weight: 900;
+    padding: 2px 8px;
+    border-radius: 3px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    box-shadow: 0 0 12px rgba(245,200,66,0.6);
+    animation: vct-pulse 1.5s infinite;
   }
-  @keyframes pulse {
-    0%,100% { opacity:1; }
-    50% { opacity:.6; }
+  @keyframes vct-pulse {
+    0%,100% { box-shadow: 0 0 12px rgba(245,200,66,0.6); opacity:1; }
+    50% { box-shadow: 0 0 20px rgba(245,200,66,0.9); opacity:0.85; }
   }
-
+ 
   .card-subject {
     font-size: clamp(15px, 2.2vw, 24px);
     font-weight: 700;
@@ -255,20 +284,20 @@
     margin-bottom: 6px;
     padding-right: 50px;
   }
-
+ 
   .card.both   .card-subject { color: var(--both); }
   .card.takumi .card-subject { color: var(--takumi); }
   .card.kirra  .card-subject { color: var(--kirra); }
   .card.pt     .card-subject,
   .card.pt-regular .card-subject { color: var(--pt); }
-
+ 
   .card-meta {
     display: flex;
     align-items: center;
     gap: 6px;
     flex-wrap: wrap;
   }
-
+ 
   .badge {
     font-size: clamp(10px, 1.4vw, 15px);
     font-weight: 700;
@@ -279,25 +308,25 @@
   .badge-t { background: rgba(91,156,246,.2);  color: var(--takumi); }
   .badge-k { background: rgba(249,112,102,.2); color: var(--kirra); }
   .badge-p { background: rgba(245,166,35,.2);  color: var(--pt); }
-
+ 
   .card-room {
     font-size: clamp(11px, 1.5vw, 16px);
     color: var(--muted);
     font-weight: 500;
   }
-
+ 
   .card-split {
     display: flex;
     flex-direction: column;
     gap: 6px;
   }
-
+ 
   .split-divider {
     height: 1px;
     background: var(--border);
     margin: 2px 0;
   }
-
+ 
   /* ── Empty slot ── */
   .card-empty {
     background: var(--surface);
@@ -309,7 +338,7 @@
     text-align: center;
     letter-spacing: .05em;
   }
-
+ 
   /* ── Legend ── */
   .legend {
     display: flex;
@@ -333,10 +362,9 @@
     flex-shrink: 0;
   }
 </style>
-
 </head>
 <body>
-
+ 
 <div class="header">
   <div class="header-top">
     <span class="header-title">時間割</span>
@@ -344,7 +372,7 @@
   </div>
   <div class="day-tabs" id="dayTabs"></div>
 </div>
-
+ 
 <div class="content">
   <div class="legend">
     <div class="legend-item"><span class="legend-dot" style="background:var(--both)"></span>共通</div>
@@ -352,9 +380,8 @@
     <div class="legend-item"><span class="legend-dot" style="background:var(--kirra)"></span>綺藍のみ</div>
     <div class="legend-item"><span class="legend-dot" style="background:var(--pt)"></span>PT</div>
   </div>
-
+ 
   <!-- 月曜 -->
-
   <div class="day-view" id="day-0">
     <div class="period-block" id="pb-0-0">
       <div class="period-label">
@@ -418,9 +445,8 @@
       </div>
     </div>
   </div>
-
+ 
   <!-- 火曜 -->
-
   <div class="day-view" id="day-1">
     <div class="period-block" id="pb-1-0">
       <div class="period-label">
@@ -495,9 +521,8 @@
       </div>
     </div>
   </div>
-
+ 
   <!-- 水曜 -->
-
   <div class="day-view" id="day-2">
     <div class="period-block" id="pb-2-0">
       <div class="period-label">
@@ -552,9 +577,8 @@
       </div>
     </div>
   </div>
-
+ 
   <!-- 木曜 -->
-
   <div class="day-view" id="day-3">
     <div class="period-block" id="pb-3-0">
       <div class="period-label">
@@ -631,9 +655,8 @@
       </div>
     </div>
   </div>
-
+ 
   <!-- 金曜 -->
-
   <div class="day-view" id="day-4">
     <div class="period-block" id="pb-4-0">
       <div class="period-label">
@@ -701,13 +724,13 @@
       </div>
     </div>
   </div>
-
+ 
 </div>
-
+ 
 <script>
 const DAYS = ['月', '火', '水', '木', '金'];
 const DAY_NAMES = ['月曜日', '火曜日', '水曜日', '木曜日', '金曜日'];
-
+ 
 // 時限の時間帯 [開始h, 開始m, 終了h, 終了m]
 const PERIODS = [
   [9,20,10,50],
@@ -715,26 +738,26 @@ const PERIODS = [
   [13,20,14,50],
   [15,10,16,40],
 ];
-
+ 
 function getJSTNow() {
   const now = new Date();
   // JST = UTC+9
   const utc = now.getTime() + now.getTimezoneOffset() * 60000;
   return new Date(utc + 9 * 3600000);
 }
-
+ 
 function init() {
   const now = getJSTNow();
   const jsDay = now.getDay(); // 0=Sun, 1=Mon...
   const todayIdx = jsDay >= 1 && jsDay <= 5 ? jsDay - 1 : -1;
-
+ 
   // 日付表示
   const dateEl = document.getElementById('headerDate');
   const mm = now.getMonth() + 1;
   const dd = now.getDate();
   const dayLabel = ['日','月','火','水','木','金','土'][now.getDay()];
   dateEl.textContent = `${mm}/${dd}（${dayLabel}）`;
-
+ 
   // タブ生成
   const tabsEl = document.getElementById('dayTabs');
   DAYS.forEach((d, i) => {
@@ -745,11 +768,11 @@ function init() {
     tab.addEventListener('click', () => switchDay(i));
     tabsEl.appendChild(tab);
   });
-
+ 
   // 初期表示：今日 or 月曜
   const defaultDay = todayIdx >= 0 ? todayIdx : 0;
   switchDay(defaultDay);
-
+ 
   // 現在授業中ハイライト
   if (todayIdx >= 0) {
     const nowH = now.getHours();
@@ -775,7 +798,7 @@ function init() {
     });
   }
 }
-
+ 
 function switchDay(idx) {
   // タブ更新
   document.querySelectorAll('.day-tab').forEach((t, i) => {
@@ -791,9 +814,9 @@ function switchDay(idx) {
     el.style.animationDelay = `${i * 0.04}s`;
   });
 }
-
+ 
 init();
 </script>
-
 </body>
 </html>
+ 
