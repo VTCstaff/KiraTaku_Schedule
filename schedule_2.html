@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
@@ -484,7 +483,6 @@
     color: #ff8080;
   }
 </style>
-
 </head>
 <body>
 
@@ -508,7 +506,6 @@
   </div>
 
   <!-- 月曜 -->
-
   <div class="day-view" id="day-0">
     <div class="period-block" id="pb-0-0">
       <div class="period-label">
@@ -574,7 +571,6 @@
   </div>
 
   <!-- 火曜 -->
-
   <div class="day-view" id="day-1">
     <div class="period-block" id="pb-1-0">
       <div class="period-label">
@@ -651,7 +647,6 @@
   </div>
 
   <!-- 水曜 -->
-
   <div class="day-view" id="day-2">
     <div class="period-block" id="pb-2-0">
       <div class="period-label">
@@ -708,7 +703,6 @@
   </div>
 
   <!-- 木曜 -->
-
   <div class="day-view" id="day-3">
     <div class="period-block" id="pb-3-0">
       <div class="period-label">
@@ -787,7 +781,6 @@
   </div>
 
   <!-- 金曜 -->
-
   <div class="day-view" id="day-4">
     <div class="period-block" id="pb-4-0">
       <div class="period-label">
@@ -964,7 +957,7 @@ function addEventCard(slotId, ev, type) {
   card.innerHTML = `
     <div class="card-subject">${ev.title}</div>
     <div class="card-meta">
-      <span class="badge ${type === 'shared' ? 'badge-shared' : 'badge-mine'}">${type === 'shared' ? '2人' : '自分'}</span>
+      <span class="badge ${type === 'shared' ? 'badge-shared' : 'badge-mine'}">${ev.personLabel || (type === 'shared' ? '2人' : '自分')}</span>
     </div>
     <button class="kyuko-btn ev-del-btn" data-slot="${slotId}" data-type="${type}">削除</button>
   `;
@@ -1001,9 +994,11 @@ function showAddModal(slotId) {
       <div id="ev-title">予定を追加</div>
       <div id="ev-quick">${QUICK_OPTIONS.map(o => `<button class="ev-quick-btn">${o}</button>`).join('')}</div>
       <input id="ev-input" type="text" placeholder="自由入力..." maxlength="30">
-      <div id="ev-share-row">
-        <label><input type="radio" name="evshare" value="mine" checked> 自分だけ</label>
-        <label><input type="radio" name="evshare" value="shared"> 2人で共有</label>
+      <div id="ev-person-row" style="display:flex; gap:12px; margin-bottom:14px; color:var(--text); font-size:14px; flex-wrap:wrap;">
+        <div style="font-size:12px;color:var(--muted);width:100%;margin-bottom:2px;">誰の予定？</div>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="radio" name="evperson" value="takumi" checked> 拓海</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="radio" name="evperson" value="kirra"> 綺藍</label>
+        <label style="display:flex;align-items:center;gap:6px;cursor:pointer;"><input type="radio" name="evperson" value="both"> 2人とも</label>
       </div>
       <div id="ev-btns">
         <button id="ev-cancel">キャンセル</button>
@@ -1027,18 +1022,10 @@ function showAddModal(slotId) {
   modal.querySelector('#ev-save').addEventListener('click', () => {
     const title = modal.querySelector('#ev-input').value.trim();
     if (!title) return;
-    const shareType = modal.querySelector('input[name=evshare]:checked').value;
-    const ev = { title };
-    if (shareType === 'shared') {
-      set(ref(db, `events/shared/${slotId}`), ev);
-    } else {
-      try {
-        const my = JSON.parse(localStorage.getItem(`myEvents_${todayStr()}`) || '{}');
-        my[slotId] = ev;
-        localStorage.setItem(`myEvents_${todayStr()}`, JSON.stringify(my));
-        addEventCard(slotId, ev, 'mine');
-      } catch(e) {}
-    }
+    const person = modal.querySelector('input[name=evperson]:checked').value;
+    const personLabel = { takumi: '拓海', kirra: '綺藍', both: '2人とも' }[person];
+    const ev = { title, person, personLabel };
+    set(ref(db, `events/shared/${slotId}`), ev);
     modal.remove();
   });
 }
@@ -1139,6 +1126,5 @@ function switchDay(idx) {
 
 init();
 </script>
-
 </body>
 </html>
