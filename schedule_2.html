@@ -434,9 +434,14 @@
   .card-empty:hover { background: var(--surface2); }
 
   /* ── 休講ボタン ── */
-  .kyuko-btn {
+  .status-btns {
     position: absolute;
-    bottom: 8px; right: 10px;
+    bottom: 8px; right: 8px;
+    display: flex;
+    gap: 4px;
+  }
+
+  .kyuko-btn, .kouketsu-btn {
     background: rgba(255,255,255,0.07);
     border: 1px solid rgba(255,255,255,0.15);
     color: var(--muted);
@@ -449,8 +454,10 @@
     transition: all .2s;
     -webkit-tap-highlight-color: transparent;
   }
-  .kyuko-btn:hover { background: rgba(255,80,80,0.2); border-color: rgba(255,80,80,0.5); color: #ff8080; }
+  .kyuko-btn:hover    { background: rgba(255,80,80,0.2);   border-color: rgba(255,80,80,0.5);   color: #ff8080; }
+  .kouketsu-btn:hover { background: rgba(255,165,0,0.2);   border-color: rgba(255,165,0,0.5);   color: #ffaa44; }
 
+  /* 休講 */
   .card.kyuko {
     opacity: 0.5;
     position: relative;
@@ -481,6 +488,39 @@
     background: rgba(255,80,80,0.25);
     border-color: rgba(255,80,80,0.6);
     color: #ff8080;
+  }
+
+  /* 公欠 */
+  .card.kouketsu {
+    opacity: 0.55;
+    position: relative;
+    filter: grayscale(0.4);
+  }
+  .card.kouketsu .card-subject {
+    text-decoration: line-through;
+    text-decoration-color: rgba(255,165,0,0.7);
+    text-decoration-thickness: 2px;
+  }
+  .card.kouketsu::after {
+    content: '公欠';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(180,100,0,0.85);
+    color: #fff;
+    font-size: 16px;
+    font-weight: 900;
+    padding: 6px 20px;
+    border-radius: 6px;
+    letter-spacing: .15em;
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+  }
+  .card.kouketsu .kouketsu-btn {
+    background: rgba(255,165,0,0.25);
+    border-color: rgba(255,165,0,0.6);
+    color: #ffaa44;
   }
 </style>
 </head>
@@ -883,12 +923,13 @@ async function resetIfNewDay() {
   const today = todayStr();
   if (last !== today) {
     await remove(ref(db, 'kyuko'));
+    await remove(ref(db, 'kouketsu'));
     await remove(ref(db, 'events/shared'));
     await set(metaRef, today);
   }
 }
 
-// ── 休講 ──
+// ── 休講・公欠 ──
 function listenKyuko() {
   onValue(ref(db, 'kyuko'), (snap) => {
     const data = snap.val() || {};
@@ -897,27 +938,65 @@ function listenKyuko() {
       card.classList.toggle('kyuko', k);
       const btn = card.querySelector('.kyuko-btn');
       if (btn) btn.textContent = k ? '復活' : '休講';
+      if (k) card.classList.remove('kouketsu');
+    });
+  });
+  onValue(ref(db, 'kouketsu'), (snap) => {
+    const data = snap.val() || {};
+    document.querySelectorAll('.card[id]').forEach(card => {
+      const k = !!data[card.id];
+      card.classList.toggle('kouketsu', k);
+      const btn = card.querySelector('.kouketsu-btn');
+      if (btn) btn.textContent = k ? '復活' : '公欠';
+      if (k) card.classList.remove('kyuko');
     });
   });
 }
 
-function toggleKyuko(cardId, currentlyKyuko) {
+function toggleKyuko(cardId, currently) {
   const r = ref(db, `kyuko/${cardId}`);
-  currentlyKyuko ? remove(r) : set(r, true);
+  if (currently) { remove(r); } else {
+    remove(ref(db, `kouketsu/${cardId}`));
+    set(r, true);
+  }
+}
+
+function toggleKouketsu(cardId, currently) {
+  const r = ref(db, `kouketsu/${cardId}`);
+  if (currently) { remove(r); } else {
+    remove(ref(db, `kyuko/${cardId}`));
+    set(r, true);
+  }
 }
 
 function addKyukoButtons() {
   document.querySelectorAll('.card[id]').forEach(card => {
-    if (card.querySelector('.kyuko-btn')) return;
-    const btn = document.createElement('button');
-    btn.className = 'kyuko-btn';
-    btn.textContent = '休講';
-    btn.addEventListener('click', (e) => {
+    if (card.querySelector('.status-btns')) return;
+    const wrap = document.createElement('div');
+    wrap.className = 'status-btns';
+
+    const kyukoBtn = document.createElement('button');
+    kyukoBtn.className = 'kyuko-btn';
+    kyukoBtn.textContent = '休講';
+    kyukoBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      toggleKyuko(card.id, card.classList.contains('kyuko'));
+      const isKyuko = card.classList.contains('kyuko');
+      toggleKyuko(card.id, isKyuko);
     });
+
+    const kouketsuBtn = document.createElement('button');
+    kouketsuBtn.className = 'kouketsu-btn';
+    kouketsuBtn.textContent = '公欠';
+    kouketsuBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isKouketsu = card.classList.contains('kouketsu');
+      toggleKouketsu(card.id, isKouketsu);
+    });
+
+    wrap.appendChild(kyukoBtn);
+    wrap.appendChild(kouketsuBtn);
     card.style.position = 'relative';
-    card.appendChild(btn);
+    card.appendChild(wrap);
   });
 }
 
